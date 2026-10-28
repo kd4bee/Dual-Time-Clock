@@ -15,15 +15,15 @@
     <meta name="apple-mobile-web-app-title" content="KD4BEE Clock">
 
     <!-- Amber Gold Favicon & Apple Touch Icon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d1117'/><circle cx='50' cy='50' r='35' fill='none' stroke='%23d29922' stroke-width='6'/><path d='M50 25 V50 L65 65' stroke='%23d29922' stroke-width='6' stroke-linecap='round'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d1117'/><circle cx='50' cy='50' r='35' fill='none' stroke='%23d29922' stroke-width='6'/><path d='M50 25 V50 L65 65' stroke='%23d29922' stroke-width='6' stroke-linecap='round'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230d1117'/><circle cx='50' cy='50' r='35' fill='none' stroke='%23d29922' stroke-width='6'/><path d='M50 25 V50 L65 65' stroke='%23d29922' stroke-width='6' stroke-linecap='round'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230d1117'/><circle cx='50' cy='50' r='35' fill='none' stroke='%23d29922' stroke-width='6'/><path d='M50 25 V50 L65 65' stroke='%23d29922' stroke-width='6' stroke-linecap='round'/></svg>">
 
     <style>
         :root {
             --bg: #000000;
             --panel: #0d1117;
             --text-main: #e6edf3;
-            --accent: #58a6ff;
+            --accent: #d29922;
             --success: #3fb950;
             --error: #f85149;
             --silver: #8b949e;
@@ -49,22 +49,12 @@
             padding: 15px;
         }
 
-        /* AM/PM Badge */
         .am-pm {
             font-size: 0.45em;
             margin-left: 6px;
             vertical-align: middle;
             color: var(--accent);
             font-weight: 600;
-        }
-
-        .header-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            max-width: 1220px;
         }
 
         .controls {
@@ -78,10 +68,11 @@
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
+            max-width: 1220px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        .fs-btn, .action-btn {
+        .fs-btn {
             background: #21262d;
             color: var(--silver);
             border: 1px solid var(--border);
@@ -97,7 +88,7 @@
             font-weight: 600;
         }
 
-        .fs-btn:active, .action-btn:active {
+        .fs-btn:active {
             transform: scale(0.96);
             background: #30363d;
             color: var(--text-main);
@@ -164,10 +155,10 @@
             margin: 8px 0;
             white-space: nowrap;
             letter-spacing: -1px;
-            text-shadow: 0 0 20px rgba(88, 166, 255, 0.15);
+            text-shadow: 0 0 20px rgba(210, 153, 34, 0.15);
         }
 
-        .date-display {
+        #local-date, #utc-date {
             font-size: clamp(1.1rem, 3.5vw, 2.1rem);
             color: var(--silver);
             letter-spacing: 1px;
@@ -215,7 +206,6 @@
             font-size: 0.75rem;
         }
 
-        /* Toggle Switch */
         .switch {
             position: relative;
             display: inline-block;
@@ -430,7 +420,6 @@
                 }
             }
 
-            // Offline fallback
             timeOffset = 0;
             document.getElementById('current-source').innerText = "Source: Device Clock";
             refreshDisplay();
@@ -480,123 +469,12 @@
             document.getElementById('local-label').innerText = selectEl.options[selectEl.selectedIndex].text;
         }
 
-        /* Dynamic Clock Shortcut Icon Generator */
-        function drawClockIcon(canvas, style) {
-            const ctx = canvas.getContext('2d');
-            const w = canvas.width;
-            const h = canvas.height;
-            const center = w / 2;
-
-            // Background
-            ctx.fillStyle = '#0a0d12';
-            ctx.fillRect(0, 0, w, h);
-
-            if (style === 'classic') {
-                // Outer ring
-                ctx.strokeStyle = '#58a6ff';
-                ctx.lineWidth = 6;
-                ctx.beginPath();
-                ctx.arc(center, center, center - 8, 0, Math.PI * 2);
-                ctx.stroke();
-
-                // Hands
-                ctx.strokeStyle = '#58a6ff';
-                ctx.lineWidth = 6;
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(center, center);
-                ctx.lineTo(center, center - 24);
-                ctx.moveTo(center, center);
-                ctx.lineTo(center + 18, center);
-                ctx.stroke();
-
-                // Center dot
-                ctx.fillStyle = '#3fb950';
-                ctx.beginPath();
-                ctx.arc(center, center, 4, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (style === 'neon') {
-                // Neon Ring
-                ctx.shadowColor = '#00f3ff';
-                ctx.shadowBlur = 12;
-                ctx.strokeStyle = '#00f3ff';
-                ctx.lineWidth = 6;
-                ctx.beginPath();
-                ctx.arc(center, center, center - 10, 0, Math.PI * 2);
-                ctx.stroke();
-
-                // Neon Hands
-                ctx.shadowColor = '#ff0055';
-                ctx.strokeStyle = '#ff0055';
-                ctx.lineWidth = 5;
-                ctx.beginPath();
-                ctx.moveTo(center, center);
-                ctx.lineTo(center - 15, center - 18);
-                ctx.moveTo(center, center);
-                ctx.lineTo(center + 20, center + 10);
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-            } else if (style === 'minimal') {
-                // Minimal Dark Frame
-                ctx.strokeStyle = '#8b949e';
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.arc(center, center, center - 12, 0, Math.PI * 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = '#e6edf3';
-                ctx.lineWidth = 6;
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(center, center);
-                ctx.lineTo(center, center - 26);
-                ctx.moveTo(center, center);
-                ctx.lineTo(center + 16, center + 16);
-                ctx.stroke();
-            }
-        }
-
-        function renderIconPreviews() {
-            drawClockIcon(document.getElementById('canvas-classic'), 'classic');
-            drawClockIcon(document.getElementById('canvas-neon'), 'neon');
-            drawClockIcon(document.getElementById('canvas-minimal'), 'minimal');
-        }
-
-        function applyFavicon(style) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 192;
-            canvas.height = 192;
-            drawClockIcon(canvas, style);
-            
-            const dataUrl = canvas.toDataURL('image/png');
-            document.getElementById('favicon').href = dataUrl;
-            document.getElementById('apple-touch-icon').href = dataUrl;
-        }
-
-        function openIconPicker() {
-            document.getElementById('iconModal').classList.add('active');
-            renderIconPreviews();
-        }
-
-        function closeIconPicker() {
-            document.getElementById('iconModal').classList.remove('active');
-        }
-
-        function selectIcon(style) {
-            selectedIconStyle = style;
-            localStorage.setItem('kd4bee_clock_icon', style);
-            applyFavicon(style);
-            
-            document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-        }
-
-        // Initialization
-        applyFavicon(selectedIconStyle);
-        refreshDisplay();
-        syncClocks();
-        setInterval(refreshDisplay, 1000);
-        setInterval(syncClocks, 300000); // Resync every 5 min
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDisplay();
+            syncClocks();
+            setInterval(refreshDisplay, 1000);
+            setInterval(syncClocks, 300000);
+        });
     </script>
 </body>
 </html>
