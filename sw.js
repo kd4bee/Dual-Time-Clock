@@ -1,16 +1,19 @@
-const CACHE_NAME = 'kd4bee-clock-v1';
+const CACHE_NAME = 'kd4bee-clock-v2';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json'
+];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(['./index.html', './manifest.json']);
-    })
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
@@ -22,10 +25,14 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request);
-    })
+self.addEventListener('fetch', (e) => {
+  if (e.request.url.includes('time.akamai.com') || 
+      e.request.url.includes('cloudflare.com') || 
+      e.request.url.includes('timeapi.io')) {
+    return;
+  }
+
+  e.respondWith(
+    caches.match(e.request).then((cached) => cached || fetch(e.request))
   );
 });
