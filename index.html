@@ -13,28 +13,62 @@
     <meta name="apple-mobile-web-app-title" content="KD4BEE Clock">
     <meta name="theme-color" content="#000000">
 
-    <!-- Embedded Amber Clock Favicon & Apple Touch Icon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><circle cx='256' cy='256' r='180' fill='none' stroke='%23d29922' stroke-width='32'/><path d='M256 128 V256 L336 336' stroke='%23d29922' stroke-width='32' stroke-linecap='round'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><circle cx='256' cy='256' r='180' fill='none' stroke='%23d29922' stroke-width='32'/><path d='M256 128 V256 L336 336' stroke='%23d29922' stroke-width='32' stroke-linecap='round'/></svg>">
-
-    <!-- Self-Generating PWA Web App Manifest -->
+    <!-- Embedded Amber Clock Icon & PWA Manifest Injection -->
     <script>
         (function() {
-            const iconSvg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><circle cx='256' cy='256' r='180' fill='none' stroke='%23d29922' stroke-width='32'/><path d='M256 128 V256 L336 336' stroke='%23d29922' stroke-width='32' stroke-linecap='round'/></svg>`;
-            const iconDataUrl = "data:image/svg+xml;utf8," + encodeURIComponent(iconSvg);
+            // Draw Amber Clock icon onto canvas to output a real base64 PNG for Chrome/Android
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
 
+            // Dark background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Amber Outer Ring
+            ctx.strokeStyle = '#d29922';
+            ctx.lineWidth = 32;
+            ctx.beginPath();
+            ctx.arc(256, 256, 180, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            // Clock Hands
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(256, 128);
+            ctx.lineTo(256, 256);
+            ctx.lineTo(336, 336);
+            ctx.stroke();
+
+            const pngDataUrl = canvas.toDataURL('image/png');
+
+            // Set Favicon & Apple Touch Icon
+            const fav = document.createElement('link');
+            fav.rel = 'icon';
+            fav.href = pngDataUrl;
+            document.head.appendChild(fav);
+
+            const appleFav = document.createElement('link');
+            appleFav.rel = 'apple-touch-icon';
+            appleFav.href = pngDataUrl;
+            document.head.appendChild(appleFav);
+
+            // Dynamic PWA Manifest
             const manifest = {
+                "id": "./",
                 "name": "KD4BEE Dual Digital Clock",
                 "short_name": "KD4BEE Clock",
                 "start_url": "./",
+                "scope": "./",
                 "display": "standalone",
                 "background_color": "#000000",
                 "theme_color": "#000000",
                 "icons": [
                     {
-                        "src": iconDataUrl,
-                        "sizes": "192x192 512x512",
-                        "type": "image/svg+xml",
+                        "src": pngDataUrl,
+                        "sizes": "512x512",
+                        "type": "image/png",
                         "purpose": "any maskable"
                     }
                 ]
